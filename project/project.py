@@ -8,19 +8,24 @@ def main():
 
     print("Welcome to Weather and Air Quality Index Reporter")
 
-    # User inputs and validates location data
-    print("To start, please input a location")
-    country = get_user_country(my_api_key)
-    state = get_user_state(my_api_key, country)
-    city = get_user_city(my_api_key, country, state)
-    print(f"Looking up data in {city}, {state}, {country}")
-    query_data = get_data(my_api_key, country, state, city)
+    # User inputs location queries data for the location
+    query_data, country, state, city = get_location_data(my_api_key)
 
     # User selects what data to show
     while True:
         choice = choose_display_data_menu()
-        display_data(query_data, choice, country, state, city)
+        if choice =='4':
+            query_data, country, state, city = get_location_data(my_api_key)
+        else:
+            display_data(query_data, choice, country, state, city)
 
+def get_location_data(api_key):
+    print("Please input a location")
+    country = get_user_country(api_key)
+    state = get_user_state(api_key, country)
+    city = get_user_city(api_key, country, state)
+    print(f"Looking up data in {city}, {state}, {country}")
+    return get_data(api_key, country, state, city), country, state, city
 
 def get_valid_countries(api_key):
     url = f"https://api.airvisual.com/v2/countries?key={api_key}"
@@ -144,13 +149,14 @@ def choose_display_data_menu():
     print("[1] Current Weather")
     print("[2] Current Pollution")
     print("[3] Both")
+    print("[4] Enter new location")
     print("[0] Exit program")
     while True:
         choice = input(
             "What data do you want to see? (Input number from options above) "
         ).strip()
         try:
-            if choice == "1" or choice == "2" or choice == "3" or choice == "0":
+            if choice == "1" or choice == "2" or choice == "3" or choice == "4" or choice == "0":
                 return choice
             else:
                 raise ValueError
